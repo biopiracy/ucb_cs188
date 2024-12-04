@@ -104,12 +104,12 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
         successors = p.getSuccessors(p.getStartState())
         start_state = p.getStartState()
         for i, s in enumerate(successors):
-            p.start_state = s[0]
+            p.start_state = p.startState = s[0]
             res.append(s[1])
             if dfs(p): 
                 return True
-            res.remove(s[1])
-            p.start_state = start_state
+            res.pop()
+            p.start_state = p.startState = start_state
         visited_node.remove(p.getStartState())
         return False
     dfs(problem)
