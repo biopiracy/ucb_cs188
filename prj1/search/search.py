@@ -20,6 +20,7 @@ Pacman agents (in searchAgents.py).
 import util
 from game import Directions
 from typing import List
+from util import Queue
 
 class SearchProblem:
     """
@@ -95,7 +96,30 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    path = {}
+    def bfs(p: SearchProblem):
+        queue = Queue()
+        res = []
+        queue.push(p.getStartState())
+        # curNode = p.getStartState()
+        while queue.isEmpty() is False: 
+            curNode = queue.pop()
+            if(p.isGoalState(curNode)):
+                break
+            else:
+                successors = p.getSuccessors(curNode)
+                for succ in successors:
+                    if succ[0] not in path and succ[0] is not p.getStartState(): 
+                        queue.push(succ[0])
+                        path[succ[0]] = (curNode, succ[1])
+        curNode = p.goal if hasattr(p, 'goal') else p.goals[0]
+        while curNode is not p.getStartState():
+            res.append(path[curNode][1])
+            curNode = path[curNode][0]
+        res.reverse()
+        return res
+    return bfs(problem)
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
