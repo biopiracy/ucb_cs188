@@ -21,6 +21,7 @@ import util
 from game import Directions
 from typing import List
 from util import PriorityQueue
+from util import Queue
 
 class SearchProblem:
     """
@@ -91,12 +92,58 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # print("Start:", problem.getStartState())
+    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    res = []
+    visited_node = set()
+    def dfs(p: SearchProblem):     
+        if p.isGoalState(p.getStartState()): 
+            return True
+        if p.getStartState() in visited_node:
+            return False
+        visited_node.add(p.getStartState())
+        successors = p.getSuccessors(p.getStartState())
+        start_state = p.getStartState()
+        for i, s in enumerate(successors):
+            p.start_state = p.startState = s[0]
+            res.append(s[1])
+            if dfs(p): 
+                return True
+            res.pop()
+            p.start_state = p.startState = start_state
+        visited_node.remove(p.getStartState())
+        return False
+    dfs(problem)
+    return res
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    path = {}
+    def bfs(p: SearchProblem):
+        queue = Queue()
+        res = []
+        queue.push(p.getStartState())
+        # curNode = p.getStartState()
+        while queue.isEmpty() is False: 
+            curNode = queue.pop()
+            if(p.isGoalState(curNode)):
+                break
+            else:
+                successors = p.getSuccessors(curNode)
+                for succ in successors:
+                    if succ[0] not in path and succ[0] is not p.getStartState(): 
+                        queue.push(succ[0])
+                        path[succ[0]] = (curNode, succ[1])
+        curNode = p.goal if hasattr(p, 'goal') else p.goals[0]
+        while curNode is not p.getStartState():
+            res.append(path[curNode][1])
+            curNode = path[curNode][0]
+        res.reverse()
+        return res
+    return bfs(problem)
 
 
 class node:
